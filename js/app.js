@@ -31,9 +31,10 @@ let getCountries = () => {
             url: "https://restcountries.eu/rest/v2/all",
 
             success: function (countries) {
-                console.log('ok');
+               // console.log('ok');
                 renderTable(countries);
                 $('.btnGetCounties').removeAttr('disabled');
+                tablePressed();
             },
             error: errorStr => {
                 console.log('error');
@@ -47,9 +48,17 @@ let getCountries = () => {
 
 jQuery(document).ready(function ($) { //когда страница прогрузилась
     $('.btnGetCounties').on('click ', e => {
-        console.log('ok');
+       // console.log('ok');
         getCountries();
     });
 });
+
+
+let tablePressed = () =>{
+    $('.placeForTable').on('click',e=>{
+       // console.log(e.target);
+        $(e.target).toggleClass('active');
+    });
+}
 
 
