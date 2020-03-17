@@ -5,7 +5,7 @@ function renderTable(countries) {
 
     let tableStr = `<table class="table table-bordered">
         <thead>
-        <tr><td>Name</td><td>Capital</td><td>Population</td><td>Area</td></tr>
+        <tr><td>Name</td><td>Population</td><td>Area</td><td>Capital</td></tr>
         </thead>
         <tbody>`;
 
