@@ -3,7 +3,7 @@ function renderTable(countries) {
         return {name, population, area, capital} = country;
     });
 
-    let tableStr = `<table class="table table-bordered">
+    let tableStr = `<table id = renderTable class="renderTable table table-bordered">
         <thead>
         <tr><td>Name</td><td>Population</td><td>Area</td><td>Capital</td></tr>
         </thead>
@@ -18,8 +18,9 @@ function renderTable(countries) {
             <td>${item.capital}</td>          
         </tr>`;
     }
-    $('.placeForTable').append(tableStr);
-
+    if(!($('.table').length)) {
+        $('.placeForTable').append(tableStr);
+    }
 
 }
 
@@ -46,12 +47,12 @@ let getCountries = () => {
 
 
 
-jQuery(document).ready(function ($) { //когда страница прогрузилась
+//jQuery(document).ready(function ($) { //когда страница прогрузилась
     $('.btnGetCounties').on('click ', e => {
        // console.log('ok');
         getCountries();
     });
-});
+//});
 
 
 let tablePressed = () =>{
