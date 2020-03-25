@@ -18,6 +18,18 @@ function storageFunction() {
 let storage = storageFunction();
 $('.searchInput').hide();
 
+function getBorders(borders) {
+   let outputArray = [];
+   let countries = storage.getCountries();
+
+   for (let item of borders){
+
+       outputArray.push(countries.filter(e=>e.alpha3Code===item)[0].name);
+           }
+   return outputArray.join(' ,');
+
+}
+
 function renderTable(countries) {
 
 
@@ -29,43 +41,18 @@ function renderTable(countries) {
 
 
     for (let item of countries) {
-        tableStr += `<tr>
+         let borders = getBorders(item.borders);
+        let currencies = item.currencies.map(el=>el.name);
+            tableStr += `<tr>
             <td>${item.name || 'Нет данных'}</td>
             <td>${item.population || 'Нет данных'}</td>
             <td>${item.area || 'Нет данных'}</td>
-            <td>${item.capital || 'Нет данных'}</td>`;
+            <td>${item.capital || 'Нет данных'}</td>
+            <td>${borders || 'Нет данных'}</td>
+            <td>${currencies.join(' ,') || 'Нет данных'}</td>`;
 
 
-        let appendBorders = '';
-        for (let borders of item.borders) {
-
-            const filteredItem = storage.getCountries().filter(function (e) {
-                return e.alpha3Code == borders;
-
-            });
-
-            // вытягиваем названия страны
-            for (let f of filteredItem) {
-                appendBorders += f.name + '; ';
-            }
-        }
-        tableStr += `<td>${appendBorders || 'Нет данных'}</td>`;
-
-
-        //добавляем список валют
-        let countCurrencies = 0;
-        for (let currency of item.currencies) {
-            if (countCurrencies == 0) {
-                tableStr += `<td>${currency.name || 'Нет данных'} `;
-                countCurrencies++;
-            } else {
-                tableStr += `, ${currency.name}`;
-                countCurrencies++
-            }
-        }
-
-
-        tableStr += '<td></tr>';
+        tableStr += '</tr>';
     }
     if (!($('.table').length)) {
         $('.placeForTable').append(tableStr);
@@ -106,12 +93,11 @@ let getCountries = () => {
 }
 
 
-//jQuery(document).ready(function ($) { //когда страница прогрузилась
 $('.btnGetCounties').on('click ', e => {
-    // console.log('ok');
+
     getCountries();
 });
-//});
+
 
 
 const addListeners = () => {
@@ -129,7 +115,7 @@ const searchCounty = () => {
     $('.searchInput').on('keyup', e => {
 
         let inputText = e.currentTarget;
-        $.each($('#renderTable tbody tr'), function () {
+        $($.each('#renderTable tbody tr'), function () {
 
             if ($(this).text().toLowerCase().indexOf($(inputText).val().toLowerCase()) === -1) {
                 $(this).hide();
