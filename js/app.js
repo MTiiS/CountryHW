@@ -80,8 +80,9 @@ const buildSelect = () => {
 
     selectStr += `</select>`;
 
-
-    $('.search-container').prepend(selectStr);
+    if ($('.search-container').length < 2) {
+        $('.search-container').prepend(selectStr);
+    }
 
 };
 //---------------------создание автозаполнения--------------------------------------------------------------------------
@@ -91,8 +92,15 @@ const setAutocomplete = () => {
     // console.log(countryNames);
     $("#countries-auto").autocomplete({
         source: countryNames,
-        minLength: 3
+        minLength: 3,
+        select: function (event, ui) {
+
+            $('input').val($(ui)[0].item.value);
+            $('.search-container').trigger('keyup');
+        }
+
     });
+
 };
 
 //-----------------------Получение данных ajax--------------------------------------------------------------------------
@@ -153,12 +161,12 @@ const searchCounty = () => {
     $('.searchInput').show();
     $('.search-container').on('keyup change', e => {
 
-        let inputText = e.target;
+        let inputText = $('#countries-auto').val();
         //  console.log(e.target);
 
         $.each($('#renderTable tbody tr td:first-child'), function () {
 
-            if ($(this).text().toLowerCase().indexOf($(inputText).val().toLowerCase()) === -1) {
+            if ($(this).text().toLowerCase().indexOf(inputText.toLowerCase()) === -1) {
                 $(this).parent().hide();
             } else {
                 //  console.log($(inputText).val().toLowerCase());
@@ -172,6 +180,7 @@ const searchCounty = () => {
 //----------------------------------------------------------------------------------------------------------------------
 
 function sortTable() {
+
 
     $('th').click(function () {
         $('.orderLow').removeClass('orderLow');
