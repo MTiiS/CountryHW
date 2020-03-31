@@ -74,7 +74,7 @@ const buildSelect = () => {
 
     let selectStr = '<select class="form-control"><option value="">Не выбрано</option>';
 
-    for(let country of countries) {
+    for (let country of countries) {
         selectStr += `<option value="${country.name}">${country.name}</option>`;
     }
 
@@ -88,8 +88,8 @@ const buildSelect = () => {
 const setAutocomplete = () => {
     const countries = storage.getCountries();
     let countryNames = countries.map(country => country.name);
-   // console.log(countryNames);
-    $( "#countries-auto" ).autocomplete({
+    // console.log(countryNames);
+    $("#countries-auto").autocomplete({
         source: countryNames,
         minLength: 3
     });
@@ -150,19 +150,18 @@ const addListeners = () => {
 const searchCounty = () => {
 
 
-
     $('.searchInput').show();
-    $('.search-container').on('keyup change' , e => {
+    $('.search-container').on('keyup change', e => {
 
-        let inputText =  e.target;
-      //  console.log(e.target);
+        let inputText = e.target;
+        //  console.log(e.target);
 
         $.each($('#renderTable tbody tr td:first-child'), function () {
 
             if ($(this).text().toLowerCase().indexOf($(inputText).val().toLowerCase()) === -1) {
                 $(this).parent().hide();
             } else {
-              //  console.log($(inputText).val().toLowerCase());
+                //  console.log($(inputText).val().toLowerCase());
                 $(this).parent().show();
             }
 
@@ -172,11 +171,11 @@ const searchCounty = () => {
 
 //----------------------------------------------------------------------------------------------------------------------
 
-function sortTable () {
+function sortTable() {
 
-    $('th').click(function(){
-    $('.orderLow').removeClass('orderLow');
-    $(this).addClass('orderHi');
+    $('th').click(function () {
+        $('.orderLow').removeClass('orderLow');
+        $(this).addClass('orderHi');
 
 
         let table = $(this).parents('table');
@@ -185,23 +184,28 @@ function sortTable () {
 
         this.flag = !this.flag;
 
-        if (this.flag){
+        if (this.flag) {
             rows = rows.reverse();
             $('.orderHi').removeClass('orderHi');
             $(this).addClass('orderLow');
         }
 
 
-        for (let i = 0; i < rows.length; i++){table.append(rows[i])}
-    })
+        for (let i = 0; i < rows.length; i++) {
+            table.append(rows[i]);
+        }
+    });
 
 
     function compareRows(columnIndex) {
-        return function(a, b) {
-            let valA = getTdText(a, columnIndex);
-            let valB = getTdText(b, columnIndex);
-            return $.isNumeric(valA) && $.isNumeric(valB) ? valA - valB : valA.toString().localeCompare(valB)
+        return function (a, b) {
+            let elemA = getTdText(a, columnIndex);
+            let elemB = getTdText(b, columnIndex);
+            return $.isNumeric(elemA) && $.isNumeric(elemB) ? elemA - elemB : elemA.toString().localeCompare(elemB);
         }
     }
-    function getTdText(tr, columnIndex){ return $(tr).children('td').eq(columnIndex).text() } // текст td по заданому индексу столбца
+
+    function getTdText(tr, columnIndex) {
+        return $(tr).children('td').eq(columnIndex).text();// текст td по заданому индексу столбца
+    }
 }
