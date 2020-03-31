@@ -161,7 +161,15 @@ const searchCounty = () => {
     $('.searchInput').show();
     $('.search-container').on('keyup change', e => {
 
-        let inputText = $('#countries-auto').val() || $(e.target).val();
+        let inputText;
+
+        if ($(e.target).is('select')) {
+            $('#countries-auto').val("");
+            inputText = $(e.target).val();
+        } else {
+            $('select').val("");
+            inputText = $('#countries-auto').val();
+        }
 
 
         $.each($('#renderTable tbody tr td:first-child'), function () {
