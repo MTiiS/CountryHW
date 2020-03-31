@@ -19,31 +19,38 @@ let storage = storageFunction();
 $('.searchInput').hide();
 
 function getBorders(borders) {
-   let outputArray = [];
-   let countries = storage.getCountries();
+    let outputArray = [];
+    let countries = storage.getCountries();
 
-   for (let item of borders){
+    for (let item of borders) {
 
-       outputArray.push(countries.filter(e=>e.alpha3Code===item)[0].name);
-           }
-   return outputArray.join(' ,');
+        outputArray.push(countries.filter(e => e.alpha3Code === item)[0].name);
+    }
+    return outputArray.join(' ,');
 
 }
 
+//-----------------------Создание таблицы-------------------------------------------------------------------------------
+
 function renderTable(countries) {
 
-
+    buildSelect();
     let tableStr = `<table id = renderTable class="renderTable table table-bordered">
-        <thead>
-        <tr><td>Name</td><td>Population</td><td>Area</td><td>Capital</td></tr>
+        <thead class='sortable th'>
+        <tr><th>Name </th>
+        <th>Population</th>
+        <th>Area </th>
+        <th>Capital</th>
+        <th>Borders </th>
+        <th>Currencies </th></tr>
         </thead>
         <tbody>`;
 
 
     for (let item of countries) {
-         let borders = getBorders(item.borders);
-        let currencies = item.currencies.map(el=>el.name);
-            tableStr += `<tr>
+        let borders = getBorders(item.borders);
+        let currencies = item.currencies.map(el => el.name);
+        tableStr += `<tr>
             <td>${item.name || 'Нет данных'}</td>
             <td>${item.population || 'Нет данных'}</td>
             <td>${item.area || 'Нет данных'}</td>
@@ -60,6 +67,35 @@ function renderTable(countries) {
 
 }
 
+//-------------------Создание Select------------------------------------------------------------------------------------
+
+const buildSelect = () => {
+    let countries = storage.getCountries();
+
+    let selectStr = '<select class="form-control"><option value="">Не выбрано</option>';
+
+    for(let country of countries) {
+        selectStr += `<option value="${country.name}">${country.name}</option>`;
+    }
+
+    selectStr += `</select>`;
+
+
+    $('.search-container').prepend(selectStr);
+
+};
+//---------------------создание автозаполнения--------------------------------------------------------------------------
+const setAutocomplete = () => {
+    const countries = storage.getCountries();
+    let countryNames = countries.map(country => country.name);
+   // console.log(countryNames);
+    $( "#countries-auto" ).autocomplete({
+        source: countryNames,
+        minLength: 3
+    });
+};
+
+//-----------------------Получение данных ajax--------------------------------------------------------------------------
 
 let getCountries = () => {
 
@@ -83,7 +119,7 @@ let getCountries = () => {
             renderTable(countries);
             $('.btnGetCounties').removeAttr('disabled');
             addListeners();
-            searchCounty();
+
         },
         error: errorStr => {
             console.log('error');
@@ -91,44 +127,81 @@ let getCountries = () => {
         }
     });
 }
-
+//------------------------------------------------------------------------------------------------------------
 
 $('.btnGetCounties').on('click ', e => {
 
     getCountries();
 });
-
-
-
 const addListeners = () => {
     $('.placeForTable').on('click', e => {
-        // console.log(e.target);
-        $(e.target).toggleClass('active');
+        $('.red-tr').removeClass('red-tr');
+        $(e.target).parent('tbody tr').toggleClass('red-tr');
 
     });
+    searchCounty();
+    setAutocomplete();
+    sortTable();
 }
 
+
+//-----------------------функция для поиска при помощи input-a и select-a-----------------------------------------------
 
 const searchCounty = () => {
 
-    $('.searchInput').show();
-    $('.searchInput').on('keyup', e => {
 
-        let inputText = e.currentTarget;
-        $($.each('#renderTable tbody tr'), function () {
+
+    $('.searchInput').show();
+    $('.search-container').on('keyup change' , e => {
+
+        let inputText =  e.target;
+      //  console.log(e.target);
+
+        $.each($('#renderTable tbody tr td:first-child'), function () {
 
             if ($(this).text().toLowerCase().indexOf($(inputText).val().toLowerCase()) === -1) {
-                $(this).hide();
+                $(this).parent().hide();
             } else {
-                $(this).show();
+              //  console.log($(inputText).val().toLowerCase());
+                $(this).parent().show();
             }
 
         });
-
     });
 }
 
+//----------------------------------------------------------------------------------------------------------------------
+
+function sortTable () {
+
+    $('th').click(function(){
+    $('.orderLow').removeClass('orderLow');
+    $(this).addClass('orderHi');
 
 
+        let table = $(this).parents('table');
+        let rows = table.find('tr:gt(0)').toArray().sort(compareRows($(this).index()));
 
 
+        this.flag = !this.flag;
+
+        if (this.flag){
+            rows = rows.reverse();
+            $('.orderHi').removeClass('orderHi');
+            $(this).addClass('orderLow');
+        }
+
+
+        for (let i = 0; i < rows.length; i++){table.append(rows[i])}
+    })
+
+
+    function compareRows(columnIndex) {
+        return function(a, b) {
+            let valA = getTdText(a, columnIndex);
+            let valB = getTdText(b, columnIndex);
+            return $.isNumeric(valA) && $.isNumeric(valB) ? valA - valB : valA.toString().localeCompare(valB)
+        }
+    }
+    function getTdText(tr, columnIndex){ return $(tr).children('td').eq(columnIndex).text() } // текст td по заданому индексу столбца
+}
