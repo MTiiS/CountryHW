@@ -193,7 +193,10 @@ function sortTable() {
 
 
     $('th').click(function () {
+
+
         $('.orderLow').removeClass('orderLow');
+        $('.orderHigh').removeClass('orderHigh');
         $(this).addClass('orderHigh');
 
 
@@ -205,13 +208,13 @@ function sortTable() {
 
         if (this.flag) {
             rows = rows.reverse();
-            $('.orderHigh').removeClass('orderHigh');
+          // $('.orderHigh').removeClass('orderHigh');
             $(this).addClass('orderLow');
         }
 
 
-        for (let i = 0; i < rows.length; i++) {
-            table.append(rows[i]);
+        for (let row of rows) {
+            table.append(row);
         }
     });
 
