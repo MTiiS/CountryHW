@@ -72,7 +72,7 @@ function renderTable(countries) {
 const buildSelect = () => {
     let countries = storage.getCountries();
 
-    let selectStr = '<select class="form-control"><option value="">Не выбрано</option>';
+    let selectStr = '<select id = "select" class="form-control"><option value="">Не выбрано</option>';
 
     for (let country of countries) {
         selectStr += `<option value="${country.name}">${country.name}</option>`;
@@ -80,9 +80,10 @@ const buildSelect = () => {
 
     selectStr += `</select>`;
 
-    if ($('.search-container').length < 2) {
+    if (!document.querySelector('.search-container>#select')) {
         $('.search-container').prepend(selectStr);
     }
+
 
 };
 //---------------------создание автозаполнения--------------------------------------------------------------------------
@@ -163,6 +164,7 @@ const searchCounty = () => {
 
         let inputText;
 
+
         if ($(e.target).is('select')) {
             $('#countries-auto').val("");
             inputText = $(e.target).val();
@@ -192,7 +194,7 @@ function sortTable() {
 
     $('th').click(function () {
         $('.orderLow').removeClass('orderLow');
-        $(this).addClass('orderHi');
+        $(this).addClass('orderHigh');
 
 
         let table = $(this).parents('table');
@@ -203,7 +205,7 @@ function sortTable() {
 
         if (this.flag) {
             rows = rows.reverse();
-            $('.orderHi').removeClass('orderHi');
+            $('.orderHigh').removeClass('orderHigh');
             $(this).addClass('orderLow');
         }
 
